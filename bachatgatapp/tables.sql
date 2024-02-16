@@ -1,3 +1,6 @@
+
+
+
 -- Table for Bachatgats
 CREATE TABLE gats (
     gat_id INT PRIMARY KEY AUTO_INCREMENT,

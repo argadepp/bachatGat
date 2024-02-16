@@ -1,6 +1,6 @@
 # Bachatgat
 
-![Bachatgat Logo](path/to/your/logo.png)
+![Bachatgat Logo](https://github.com/argadepp/bachatGat/blob/master/__screenshots/bachatgatlogo.png)
 
 Bachatgat is a web application designed to simplify and manage group savings (bachat) within a community. It helps members of a group to contribute, track savings, and request loans efficiently.
 

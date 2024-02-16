@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Bachat</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Add Bachat</h2>
+        <form method="post" action="{{ url_for('add_bachat') }}">
+            <!-- Add bachat form fields -->
+            <div class="form-group">
+                <label for="memberId">Select Member:</label>
+                <select class="form-control" id="memberId" name="memberId" required>
+                    {% for member in members %}
+                        <option value="{{ member[0] }}">{{ member[1] }}</option>  <!-- Adjust indices based on your database schema -->
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="bachatDate">Bachat Date:</label>
+                <input type="date" class="form-control" id="bachatDate" name="bachatDate" required>
+            </div>
+            <div class="form-group">
+                <label for="bachatAmount">Bachat Amount:</label>
+                <input type="number" class="form-control" id="bachatAmount" name="bachatAmount" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

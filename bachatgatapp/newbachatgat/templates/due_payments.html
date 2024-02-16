@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Due Payments</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2>Due Payments</h2>
+
+    <!-- Display Due Payments -->
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Due Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for month, due_payment in due_payments %}
+                <tr>
+                    <td>{{ month }}</td>
+                    <td>{{ due_payment.due_amount }}</td>
+                    <td>{{ due_payment.status }}</td>
+                    <td>
+                        {% if due_payment.status != 'paid' %}
+                            <a href="{{ url_for('make_due_payment', request_id=loan_request.request_id, month=month) }}" class="btn btn-success btn-sm" title="Pay">
+                                Pay
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Add Back Button or Navigation Link -->
+
+    <!-- Logout Button -->
+    <form method="post" action="{{ url_for('logout') }}" class="mt-4">
+        <button type="submit" class="btn btn-danger float-right">Logout</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

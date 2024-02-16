@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Member</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Edit Member</h2>
+        <form method="post" action="{{ url_for('edit_member', member_id=member[0]) }}">
+            <!-- Edit form fields -->
+            <div class="form-group">
+                <label for="memberName">Name:</label>
+                <input type="text" class="form-control" id="memberName" name="memberName" value="{{ member[2] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="memberEmail">Email:</label>
+                <input type="email" class="form-control" id="memberEmail" name="memberEmail" value="{{ member[3] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="memberPassword">Password:</label>
+                <input type="password" class="form-control" id="memberPassword" name="memberPassword" required>
+            </div>
+            <div class="form-group">
+                <label for="memberAddress">Address:</label>
+                <textarea class="form-control" id="memberAddress" name="memberAddress" rows="2" required>{{ member[5] }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="memberMobile">Mobile Number:</label>
+                <input type="tel" class="form-control" id="memberMobile" name="memberMobile" value="{{ member[6] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="memberType">Member Type:</label>
+                <select class="form-control" id="memberType" name="memberType" required>
+                    <option value="member" {% if member[7] == 'member' %} selected {% endif %}>Member</option>
+                    <option value="admin" {% if member[7] == 'admin' %} selected {% endif %}>Admin</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Member</button>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

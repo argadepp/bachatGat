@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Bachat</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="mb-4">View Bachat</h2>
+
+    <!-- Total Bachat for the Gat -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Total Bachat for the Gat</h5>
+            <h3 class="card-text">Total Bachat: {{ total_bachat_for_gat or 0 }}</h3>
+        </div>
+    </div>
+
+    <!-- Total Bachat for All Months -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Total Bachat for All Months</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Member Name</th>
+                        <th>Total Bachat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in total_bachat_all_months %}
+                        <tr>
+                            <td>{{ member[0] }}</td>
+                            <td>{{ member[1] or 0 }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Logout Button -->
+    <form method="post" action="{{ url_for('logout') }}" class="mt-4">
+        <button type="submit" class="btn btn-danger float-right">Logout</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

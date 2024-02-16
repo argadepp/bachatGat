@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Request Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="text-center">Loan Request Form</h2>
+        </div>
+        <div class="card-body">
+
+            <!-- Display member information -->
+            <div class="mb-4">
+                <h5 class="card-title">Member Information</h5>
+                <p class="card-text"><strong>Member ID:</strong> {{ member[0] }}</p>
+                <p class="card-text"><strong>Name:</strong> {{ member[2] }}</p>
+                <!-- Add other member details as needed -->
+            </div>
+
+            <!-- Loan Request Form -->
+            <form method="post" action="{{ url_for('loan_request_form', member_id=member[0]) }}">
+
+                <div class="form-group">
+                    <label for="loanAmount">Loan Amount:</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">₹</span>
+                        </div>
+                        <input type="number" class="form-control" id="loanAmount" name="loanAmount" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="interestRate">Interest Rate:</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="interestRate" name="interestRate" required>
+                        <div class="input-group-append">
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit Loan Request</button>
+
+            </form>
+
+        </div>
+        <div class="card-footer text-muted">
+            <!-- Logout Button -->
+            <form method="post" action="{{ url_for('logout') }}">
+                <button type="submit" class="btn btn-danger float-right">Logout</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

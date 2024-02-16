@@ -20,7 +20,7 @@ jobs:
         env:
           GHCR_REGISTRY: ghcr.io
           IMAGE_NAME: bachatgat
-          DOCKERFILE_PATH: ./bachatgatapp/newbachatgat/Dockerfile
+          DOCKERFILE_PATH: ./bachatgatapp/newbachatgat/
           GITHUB_REPOSITORY: argadepp
         run: |
 

@@ -61,11 +61,15 @@ We welcome contributions! Feel free to fork the repository, make changes, and su
 
 ## Screenshots
 
-![Wecome Page 1](/auth-template/__screenshots/welcome.JPG)
+![Wecome Page 1](https://github.com/argadepp/bachatGat/blob/master/__screenshots/welcome.JPG)
 
-![Register Page 2](/auth-template/__screenshots/register.JPG)
+![Register Page 2](https://github.com/argadepp/bachatGat/blob/master/__screenshots/register.JPG)
 
-...
+![Login Page 3](https://github.com/argadepp/bachatGat/blob/master/__screenshots/login.JPG)
+
+![Dashboard Page 4](https://github.com/argadepp/bachatGat/blob/master/__screenshots/dashboard.JPG)
+
+![View Bachat Page 5](https://github.com/argadepp/bachatGat/blob/master/__screenshots/view_bachat.JPG)
 
 ## License
 

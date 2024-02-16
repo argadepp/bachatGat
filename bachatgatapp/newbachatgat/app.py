@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 
 # MySQL Configuration
-app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_HOST'] = 'database'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'password'
 app.config['MYSQL_DB'] = 'jansevadb'

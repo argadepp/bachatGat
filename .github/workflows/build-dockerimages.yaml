@@ -1,0 +1,38 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and Push Docker Image
+        env:
+          GHCR_REGISTRY: ghcr.io
+          IMAGE_NAME: bachatgat
+          DOCKERFILE_PATH: ./bachatgatapp/newbachatgat/Dockerfile
+          GITHUB_REPOSITORY: argadepp
+        run: |
+
+          docker buildx create --use
+          docker buildx inspect
+          
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t $GHCR_REGISTRY/$GITHUB_REPOSITORY/$IMAGE_NAME:latest \
+            -f $DOCKERFILE_PATH \
+            .
+
+          echo ${{ secrets.GHCR_PAT }} | docker login $GHCR_REGISTRY -u $GITHUB_ACTOR --password-stdin
+          
+          docker push $GHCR_REGISTRY/$GITHUB_REPOSITORY/$IMAGE_NAME:latest

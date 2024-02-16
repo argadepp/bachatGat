@@ -8,36 +8,40 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h2>Bachatgat Registration</h2>
-        <form method="post" action="{{ url_for('register') }}">
-            <!-- Registration form fields -->
-            <div class="form-group">
-                <label for="gatName">Bachatgat Name:</label>
-                <input type="text" class="form-control" id="gatName" name="gatName" required>
+        <div class="row centered-form">
+            <div class="col-xs-12 col-sm-8 col-md-4 col-sm-offset-2 col-md-offset-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Bachatgat Registration</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form method="post" action="{{ url_for('register') }}">
+                            <div class="form-group">
+                                <input type="text" name="gatName" id="gatName" class="form-control input-sm" placeholder="Bachatgat Name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="number" name="memberCount" id="memberCount" class="form-control input-sm" placeholder="Member Count" required>
+                            </div>
+                            <div class="form-group">
+                                <textarea class="form-control input-sm" id="address" name="address" placeholder="Address" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" name="contactNumber" id="contactNumber" class="form-control input-sm" placeholder="Contact Number" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" name="email" id="email" class="form-control input-sm" placeholder="Email Address" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="password" name="password" id="password" class="form-control input-sm" placeholder="Password" required>
+                            </div>
+                            <input type="submit" value="Register" class="btn btn-info btn-block">
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="memberCount">Member Count:</label>
-                <input type="number" class="form-control" id="memberCount" name="memberCount" required>
-            </div>
-            <div class="form-group">
-                <label for="address">Address:</label>
-                <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="contactNumber">Contact Number:</label>
-                <input type="tel" class="form-control" id="contactNumber" name="contactNumber" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email Address:</label>
-                <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
+        </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

@@ -1,23 +1,72 @@
-# tsParticles Authentication Template
+# Bachatgat
 
-tsParticles Simple Auth HTML Template for Websites
+![Bachatgat Logo](path/to/your/logo.png)
 
-## Login Page Preview
-[![login](https://raw.githubusercontent.com/tsparticles/auth-template/master/__screenshots/login.png?raw=true)](https://tsparticles.github.io/auth-template/login.html)
+Bachatgat is a web application designed to simplify and manage group savings (bachat) within a community. It helps members of a group to contribute, track savings, and request loans efficiently.
 
-See working preview [here](https://tsparticles.github.io/auth-template/login.html)
+## Features
 
-## Register Page Preview
-[![register](https://raw.githubusercontent.com/tsparticles/auth-template/master/__screenshots/register.png?raw=true)](https://tsparticles.github.io/auth-template/register.html)
+- **User Registration:** Register your Bachatgat with details like name, member count, address, contact number, email, and password.
 
-See working preview [here](https://tsparticles.github.io/auth-template/register.html)
+- **Login:** Log in securely to access your Bachatgat dashboard.
 
-## What is tsParticles
+- **View Bachat:** Track the total savings for the entire group and individual members over different months.
 
-[tsParticles](https://github.com/matteobruni/tsparticles) is a lightweight library for easily creating particles animations in your websites or web applications.
+- **Loan Requests:** Members can request loans, and once approved by the admin, the loan amount is deducted from the total savings.
 
-The [tsParticles](https://github.com/matteobruni/tsparticles) library is ready to be used in standard JavaScript, React, Vue.js, Angular, Svelte, jQuery, Preact, Inferno.
+- **Loan Details:** View details of loans, including interest rates, due amounts, and payment history.
 
-Want to see more particles demos? [Checkout this collection](https://codepen.io/collection/DPOage)
+- **Dashboard:** An admin dashboard to manage members, loan requests, and approve/reject requests.
 
-Want to see more templates or want to share yours? [Checkout this README](https://github.com/tsparticles/templates)
+## Technologies Used
+
+- **Frontend:** HTML, CSS, Bootstrap
+- **Backend:** Python, Flask (Web Framework)
+- **Database:** MySQL
+- **Deployment:** Docker, GitHub Actions
+
+## Getting Started
+
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/your-username/bachatgat.git
+    cd bachatgat
+    ```
+
+2. Set up the virtual environment:
+
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows, use venv\Scripts\activate
+    ```
+
+3. Install dependencies:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. Run the application:
+
+    ```bash
+    python app.py
+    ```
+
+5. Access the application at `http://localhost:5000` in your web browser.
+
+## Contributing
+
+We welcome contributions! Feel free to fork the repository, make changes, and submit a pull request to help improve Bachatgat.
+
+## Screenshots
+
+![Wecome Page 1](/auth-template/__screenshots/welcome.JPG)
+
+![Register Page 2](/auth-template/__screenshots/register.JPG)
+
+...
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).

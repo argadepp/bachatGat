@@ -7,21 +7,39 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container mt-5">
-        <h2>Bachatgat Login</h2>
-        <form method="post" action="{{ url_for('login') }}">
-            <!-- Login form fields -->
-            <div class="form-group">
-                <label for="gatId">Bachatgat ID or Email:</label>
-                <input type="text" class="form-control" id="gatId" name="gatId" required>
+    <div id="login">
+        <h3 class="text-center text-white pt-5">Bachatgat Login</h3>
+        <div class="container">
+            <div id="login-row" class="row justify-content-center align-items-center">
+                <div id="login-column" class="col-md-6">
+                    <div id="login-box" class="col-md-12">
+                        <form id="login-form" class="form" action="{{ url_for('login') }}" method="post">
+                            <h3 class="text-center text-info">Login</h3>
+                            <div class="form-group">
+                                <label for="gatId" class="text-info">Bachatgat ID or Email:</label><br>
+                                <input type="text" name="gatId" id="gatId" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="text-info">Password:</label><br>
+                                <input type="password" name="password" id="password" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="remember-me" class="text-info">
+                                    <span>Remember me</span>
+                                    <span><input id="remember-me" name="remember-me" type="checkbox"></span>
+                                </label><br>
+                                <input type="submit" name="submit" class="btn btn-info btn-md" value="Login">
+                            </div>
+                            <div id="register-link" class="text-right">
+                                <a href="{{ url_for('register') }}" class="text-info">Register here</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-        </form>
+        </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

@@ -9,6 +9,9 @@
 <body>
     <div class="container mt-5">
         <h2>Add Bachat</h2>
+        {% if selected_member_name %}
+            <p>Selected Member: {{ selected_member_name }}</p>
+        {% endif %}
         <form method="post" action="{{ url_for('add_bachat') }}">
             <!-- Add bachat form fields -->
             <div class="form-group">
@@ -19,13 +22,16 @@
                     {% endfor %}
                 </select>
             </div>
+            {% if selected_member_name %}
+                <input type="hidden" name="selected_member_name" value="{{ selected_member_name }}">
+            {% endif %}
             <div class="form-group">
                 <label for="bachatDate">Bachat Date:</label>
                 <input type="date" class="form-control" id="bachatDate" name="bachatDate" required>
             </div>
             <div class="form-group">
                 <label for="bachatAmount">Bachat Amount:</label>
-                <input type="number" class="form-control" id="bachatAmount" name="bachatAmount" required>
+                <input type="number" value="500" class="form-control" id="bachatAmount" name="bachatAmount" required>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>

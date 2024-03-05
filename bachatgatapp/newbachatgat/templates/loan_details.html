@@ -9,24 +9,36 @@
 <body>
 
 <div class="container mt-5">
-    <h2>Loan Details</h2>
-    <div class="card mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="text-center">Loan Details</h2>
+        </div>
         <div class="card-body">
-            <h5 class="card-title">Loan Request ID: {{ loan_request.request_id }}</h5>
-            <p class="card-text">Member Name: {{ loan_request.member_name }}</p>
-            <p class="card-text">Loan Amount: {{ loan_request.loan_amount }}</p>
-            <p class="card-text">Interest Rate: {{ loan_request.interest_rate }}</p>
-            <p class="card-text">Request Date: {{ loan_request.request_date }}</p>
-            <!-- Add more details as needed -->
+
+            <!-- Display loan details -->
+            <div class="mb-4">
+                <h5 class="card-title">Loan Request Information</h5>
+                <p class="card-text"><strong>Request ID:</strong> {{ loan_details[0] }}</p>
+                <p class="card-text"><strong>Member Name:</strong> {{ loan_details[7] }}</p>
+                <p class="card-text"><strong>Requested Amount:</strong> ₹{{ loan_details[3] }}</p>
+                <p class="card-text"><strong>Interest Rate:</strong> {{ loan_details[4] }}%</p>
+                <p class="card-text"><strong>Status:</strong> {{ loan_details[5] }}</p>
+                <p class="card-text"><strong>Request Date:</strong> {{ loan_details[6] }}</p>
+            </div>
+
+            <!-- Approval form -->
+            <form method="post" action="{{ url_for('approve_loan_request', request_id=loan_details[0]) }}">
+                <button type="submit" class="btn btn-success" name="approve_loan">Approve Loan</button>
+            </form>
+
+        </div>
+        <div class="card-footer text-muted">
+            <!-- Logout Button -->
+            <form method="post" action="{{ url_for('logout') }}">
+                <button type="submit" class="btn btn-danger float-right">Logout</button>
+            </form>
         </div>
     </div>
-
-    <!-- Add Back Button or Navigation Link -->
-
-    <!-- Logout Button -->
-    <form method="post" action="{{ url_for('logout') }}" class="mt-4">
-        <button type="submit" class="btn btn-danger float-right">Logout</button>
-    </form>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

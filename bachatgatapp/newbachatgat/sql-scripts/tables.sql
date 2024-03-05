@@ -61,9 +61,17 @@ CREATE TABLE IF NOT EXISTS loan_requests (
     gat_id INT NOT NULL,
     member_id INT NOT NULL,
     request_amount DECIMAL(10, 2) NOT NULL,
-    interest_rate DECIMAL(5, 2) NOT NULL,
+    interest_rate FLOAT NOT NULL,
     request_status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
     request_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (gat_id) REFERENCES gats(gat_id),
     FOREIGN KEY (member_id) REFERENCES members(member_id)
+);
+
+CREATE TABLE interest_rate (
+    interest_rate_id INT AUTO_INCREMENT PRIMARY KEY,
+    gat_id INT,
+    interest_rate FLOAT,
+    start_date DATE,
+    FOREIGN KEY (gat_id) REFERENCES gats(gat_id) ON DELETE CASCADE
 );

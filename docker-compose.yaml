@@ -3,17 +3,14 @@ version: '3'
 services:
 
   frontend:
-    # image: ghcr.io/argadepp/bachatgat:master
-    build:
-      context: .
-
+    image: ghcr.io/argadepp/bachatgat:master
     environment:
-      - DB_HOST=database
+      - DB_HOST=vrushali.pratikargade.online
       - DB_USER=root
       - DB_PASSWORD=password
       - DB_NAME=jansevadb    
     ports:
-      - "80:5000"
+      - "8081:5000"
 
   database:
     image: mysql:latest

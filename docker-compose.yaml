@@ -10,7 +10,7 @@ services:
       - DB_PASSWORD=password
       - DB_NAME=jansevadb    
     ports:
-      - "80:5000"
+      - "8081:5000"
 
   database:
     image: mysql:latest

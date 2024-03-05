@@ -3,10 +3,7 @@ version: '3'
 services:
 
   frontend:
-    # image: ghcr.io/argadepp/bachatgat:master
-    build:
-      context: .
-
+    image: ghcr.io/argadepp/bachatgat:master
     environment:
       - DB_HOST=database
       - DB_USER=root

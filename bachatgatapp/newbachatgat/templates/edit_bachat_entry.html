@@ -1,0 +1,15 @@
+<!-- edit_bachat_entry.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Include necessary head elements here -->
+</head>
+<body>
+    <h2>Edit Bachat Entry</h2>
+    <form method="post" action="{{ url_for('edit_bachat_entry', entry_id=entry_details[0]) }}">
+        <label for="newBachatAmount">New Bachat Amount:</label>
+        <input type="text" id="newBachatAmount" name="newBachatAmount" value="{{ entry_details[2] }}" required>
+        <button type="submit">Save Changes</button>
+    </form>
+</body>
+</html>

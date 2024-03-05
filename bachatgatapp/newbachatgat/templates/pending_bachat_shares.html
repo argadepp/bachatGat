@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css">
+</head>
+<body>
+    <!-- Logout Button -->
+    <form method="post" action="{{ url_for('logout') }}">
+        <button type="submit" class="btn btn-danger float-right">Logout</button>
+    </form>
+
+    <div class="container mt-5">
+        <!-- Display Pending Members Table -->
+        <h3>Pending Bachat Shares</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Member Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in pending_members %}
+                    <tr>
+                        <td>{{ member[0] }}</td>  <!-- Adjust index based on your database schema -->
+                        <td>
+                            <form method="post" action="{{ url_for('pay_now') }}" class="d-inline">
+                                <button type="submit" class="btn btn-info btn-sm" title="Pay Now">
+                                    Pay Now
+                                </button>
+                            </form>                   
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/boot

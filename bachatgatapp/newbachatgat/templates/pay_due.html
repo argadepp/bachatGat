@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loan Details</title>
+    <title>Pay Due</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
@@ -11,25 +11,24 @@
 <div class="container mt-5">
     <div class="card">
         <div class="card-header">
-            <h2 class="text-center">Loan Details</h2>
+            <h2 class="text-center">Pay Due</h2>
         </div>
         <div class="card-body">
 
             <!-- Display loan details -->
             <div class="mb-4">
-                <h5 class="card-title">Loan Request Information</h5>
-                <p class="card-text"><strong>Request ID:</strong> {{ loan_details[0] }}</p>
-                <p class="card-text"><strong>Member Name:</strong> {{ loan_details[7] }}</p>
-                <p class="card-text"><strong>Requested Amount:</strong> ₹{{ loan_details[3] }}</p>
+                <h5 class="card-title">Loan Details</h5>
+                <p class="card-text"><strong>Loan ID:</strong> {{ loan_details[0] }}</p>
+                <p class="card-text"><strong>Member Name:</strong> {{ loan_details[2] }}</p>
+                <p class="card-text"><strong>Loan Amount:</strong> ₹{{ loan_details[3] }}</p>
                 <p class="card-text"><strong>Interest Rate:</strong> {{ loan_details[4] }}%</p>
-                <p class="card-text"><strong>Status:</strong> {{ loan_details[5] }}</p>
-                <p class="card-text"><strong>Request Date:</strong> {{ loan_details[6] }}</p>
+                <p class="card-text"><strong>Due Date:</strong> {{ loan_details[6] }}</p>
             </div>
-            <form method="post" action="{{ url_for('approve_loan_request', request_id=loan_details[0]) }}">
-                <button type="submit" class="btn btn-success" name="approve_loan">Approve Loan</button>
+
+            <!-- Pay Due form -->
+            <form method="post" action="{{ url_for('pay_due', loan_id=loan_details[0]) }}">
+                <button type="submit" class="btn btn-success" name="pay_due">Pay Due</button>
             </form>
-<!-- Payment form -->
-<a href="{{ url_for('calculate_emi_route', loan_id=loan_details[0]) }}">Calculate EMI</a>
 
         </div>
         <div class="card-footer text-muted">

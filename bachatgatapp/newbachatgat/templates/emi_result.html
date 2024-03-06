@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMI Calculation Result</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="text-center">EMI Calculation Result</h2>
+        </div>
+        <div class="card-body">
+
+            <!-- Display EMI Calculation Result -->
+            <div class="mb-4">
+                <h5 class="card-title">Amortization Schedule</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Month</th>
+                            <th scope="col">Monthly Payment</th>
+                            <th scope="col">Principal Repayment</th>
+                            <th scope="col">Interest Payment</th>
+                            <th scope="col">Remaining Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in amortization_schedule %}
+                            <tr>
+                                <td>{{ payment["Month"] }}</td>
+                                <td>{{ payment["Monthly_Payment"]|round(2) }}</td>
+                                <td>{{ payment["Principal_Repayment"]|round(2) }}</td>
+                                <td>{{ payment["Interest_Payment"]|round(2) }}</td>
+                                <td>{{ payment["Remaining_Balance"]|round(2) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="card-footer text-muted">
+            <!-- Your footer content here -->
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

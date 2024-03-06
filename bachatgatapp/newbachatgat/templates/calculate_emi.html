@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculate EMI</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2>EMI Calculation</h2>
+
+    <!-- Display EMI calculation result -->
+<!-- Display loan details -->
+<div class="mb-4">
+    <h5 class="card-title">Loan Request Information</h5>
+    <p class="card-text"><strong>Request ID:</strong> {{ loan_details[0] }}</p>
+    <p class="card-text"><strong>Member Name:</strong> {{ loan_details[-1] }}</p>
+    <!-- Add other loan details as needed -->
+</div>
+
+<!-- Display EMI calculation result -->
+<p><strong>EMI Schedule:</strong></p>
+{{ table_html|safe }}
+
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

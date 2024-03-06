@@ -10,7 +10,8 @@ CREATE TABLE gats (
     contact_number VARCHAR(15) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    total_bachat DECIMAL(10, 2) DEFAULT 0.00
 );
 
 -- Table for Transactions
@@ -74,4 +75,19 @@ CREATE TABLE interest_rate (
     interest_rate FLOAT,
     start_date DATE,
     FOREIGN KEY (gat_id) REFERENCES gats(gat_id) ON DELETE CASCADE
+);
+
+CREATE TABLE loans (
+    loan_id INT AUTO_INCREMENT PRIMARY KEY,
+    gat_id INT,
+    member_id INT,
+    loan_amount DECIMAL(10, 2),
+    interest_rate DECIMAL(5, 2),
+    request_id INT,
+    due_date DATE,
+    status ENUM('pending', 'paid') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (gat_id) REFERENCES gats(gat_id),
+    FOREIGN KEY (member_id) REFERENCES members(member_id),
+    FOREIGN KEY (request_id) REFERENCES loan_requests(request_id)
 );

@@ -3,7 +3,14 @@ from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import os
+import math
+from prettytable import PrettyTable
+from dateutil.relativedelta import relativedelta
 from flask import flash
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+from decimal import Decimal, getcontext
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'bachatgat'
 
@@ -20,6 +27,10 @@ mysql = MySQL(app)
 def home():
     return render_template('index.html')
 
+def get_next_month():
+    today = datetime.today()
+    next_month = today + relativedelta(months=1)
+    return next_month.date()
 # Registration page
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -101,6 +112,59 @@ def loan_request_form(member_id):
     else:
         return redirect(url_for('login'))
 
+@app.route('/pay_loan/<int:loan_id>', methods=['POST'])
+def pay_loan(loan_id):
+    if 'gat_id' in session:
+        cur = mysql.connection.cursor()
+
+        # Retrieve loan details
+        cur.execute("SELECT * FROM loans WHERE loan_id = %s", (loan_id,))
+        loan_details = cur.fetchone()
+
+        # Check if the loan status is 'pending'
+        if loan_details[6] == 'pending':  # Assuming 'status' is the 7th column in the SELECT query
+            # Update loan status to 'paid' and deduct the loan amount from the total bachat
+            cur.execute("UPDATE loans SET status = 'paid' WHERE loan_id = %s", (loan_id,))
+            cur.execute("UPDATE total_bachat SET total_bachat_amount = total_bachat_amount - %s WHERE gat_id = %s",
+                        (loan_details[3], loan_details[1]))  # Assuming 'loan_amount' and 'gat_id' columns
+
+            mysql.connection.commit()
+
+        cur.close()
+        return redirect(url_for('dashboard'))
+    else:
+        return redirect(url_for('login'))
+    
+
+@app.route('/pay_due/<int:loan_id>', methods=['POST'])
+def pay_due(loan_id):
+    if 'gat_id' in session:
+        gat_id = session['gat_id']
+        cur = mysql.connection.cursor()
+
+        # Fetch loan details
+        cur.execute("SELECT * FROM loans WHERE loan_id = %s", (loan_id,))
+        loan_details = cur.fetchone()
+
+        # Check if loan status is 'approved'
+        if loan_details and loan_details['status'] == 'approved':
+            # Calculate due amount with interest
+            due_amount = calculate_due_payments(loan_details)
+
+            # Deduct due amount from total bachat
+            cur.execute("UPDATE total_bachat SET total_bachat_amount = total_bachat_amount - %s WHERE gat_id = %s", (due_amount, gat_id))
+
+            # Deduct due amount from loan
+            cur.execute("UPDATE loans SET loan_amount = loan_amount - %s WHERE loan_id = %s", (due_amount, loan_id))
+
+            # Commit changes
+            mysql.connection.commit()
+
+            cur.close()
+            return render_template('pay_due.html', loan_details=loan_details)
+    
+    return redirect(url_for('dashboard'))
+    
 
 # Add a new route for displaying all bachat entries
 @app.route('/all_bachat_entries', methods=['GET'])
@@ -293,6 +357,7 @@ def update_loan_status(loan_request_id):
         return redirect(url_for('login'))
 
 
+
 def approve_loan(loan_request_id):
     if 'gat_id' in session:
         cur = mysql.connection.cursor()
@@ -323,37 +388,111 @@ def get_loan_request_by_id(request_id):
 @app.route('/approve_loan_request/<int:request_id>', methods=['POST'])
 def approve_loan_request(request_id):
     if 'gat_id' in session:
-        # Check if the request is a POST request
-        if request.method == 'POST':
-            gat_id = session['gat_id']
-            cur = mysql.connection.cursor()
+        cur = mysql.connection.cursor()
 
-            # Retrieve the loan request data
-            loan_request = get_loan_request_by_id(request_id)
+        # Retrieve loan request details
+        cur.execute("SELECT * FROM loan_requests WHERE request_id = %s", (request_id,))
+        loan_request = cur.fetchone()
 
-            # Check if the loan request exists
-            if loan_request is not None and loan_request['gat_id'] == gat_id:
-                # Update the loan request status to 'Approved'
-                cur.execute("UPDATE loan_requests SET request_status = %s WHERE request_id = %s", ('Approved', request_id))
-                mysql.connection.commit()
+        # Check if the loan status is 'approved'
+        if loan_request[5] == 'approved':  # Assuming 'request_status' is the 6th column in the SELECT query
+            # Deduct the approved amount from the total bachat
+            cur.execute("UPDATE total_bachat SET total_bachat_amount = total_bachat_amount - %s WHERE gat_id = %s",
+                        (loan_request[3], loan_request[1]))  # Assuming 'request_amount' and 'gat_id' columns
 
-                # Implement logic to deduct the amount from the total and charge interest
-                # This could involve updating the member's account, calculating interest, etc.
+            # Insert loan details into the 'loans' table
+            cur.execute("INSERT INTO loans (gat_id, member_id, loan_amount, interest_rate, request_id, due_date) "
+                        "VALUES (%s, %s, %s, %s, %s, %s)",
+                        (loan_request[1], loan_request[2], loan_request[3], loan_request[4], loan_request[0], get_next_month()))
+            mysql.connection.commit()
 
-                # Redirect to the loan details page after approval
-                return redirect(url_for('loan_details', request_id=request_id))
-            else:
-                flash("Loan request not found or unauthorized", 'error')
+        # Update loan request status to approved
+        cur.execute("UPDATE loan_requests SET request_status = 'approved' WHERE request_id = %s", (request_id,))
+        mysql.connection.commit()
 
-            cur.close()
-            return redirect(url_for('view_bachat'))
-        else:
-            # Handle case where the request is not a POST request
-            flash("Invalid request method", 'error')
-            return redirect(url_for('view_bachat'))
+        cur.close()
+        return redirect(url_for('dashboard'))
     else:
-        # Redirect to login if the user is not logged in
         return redirect(url_for('login'))
+
+# Method to calculate EMI
+def calculate_emi(principal, annual_interest_rate, loan_term_in_years):
+    # Convert principal and annual_interest_rate to Decimal if not already
+    principal = Decimal(str(principal))
+    annual_interest_rate = Decimal(str(annual_interest_rate))
+
+    monthly_interest_rate = annual_interest_rate / 12 / 100
+    total_payments = loan_term_in_years * 12
+
+    emi = (principal * monthly_interest_rate) / (1 - (1 + monthly_interest_rate) ** -total_payments)
+
+    amortization_schedule = []
+
+    remaining_balance = principal
+
+    for month in range(1, total_payments + 1):
+        interest_payment = remaining_balance * monthly_interest_rate
+        principal_payment = emi - interest_payment
+        remaining_balance -= principal_payment
+
+        amortization_schedule.append({
+            "Month": month,
+            "Monthly_Payment": emi,
+            "Principal_Repayment": principal_payment,
+            "Interest_Payment": interest_payment,
+            "Remaining_Balance": remaining_balance
+        })
+
+    return amortization_schedule
+
+def display_amortization_schedule(amortization_schedule):
+    table = PrettyTable()
+    table.field_names = ["Month", "Monthly Payment", "Principal Repayment", "Interest Payment", "Remaining Balance"]
+
+    for payment in amortization_schedule:
+        table.add_row([
+            payment["Month"],
+            "{:.2f}".format(payment["Monthly_Payment"]),
+            "{:.2f}".format(payment["Principal_Repayment"]),
+            "{:.2f}".format(payment["Interest_Payment"]),
+            "{:.2f}".format(payment["Remaining_Balance"])
+        ])
+
+    return table.get_html_string()
+
+def fetch_loan_details_from_database(loan_id):
+    try:
+        # connection = mysql.connector.connect(**db_config)
+        cursor = mysql.connection.cursor()
+
+        # Assuming your loans table has columns like 'loan_amount', 'interest_rate', 'due_date', 'status', etc.
+        query = "SELECT * FROM loans WHERE loan_id = %s"
+        cursor.execute(query, (loan_id,))
+        loan_details = cursor.fetchone()
+
+        return loan_details
+
+    except Exception as e:
+        print(f"Error fetching loan details: {e}")
+        return None
+
+    finally:
+        cursor.close()
+
+def get_remaining_months(due_date):
+    # Replace this with your actual logic to calculate remaining months
+    # Example: (replace this with your actual logic)
+    from datetime import datetime
+
+    today = datetime.now()
+    due_date = datetime.strptime(due_date, '%Y-%m-%d')
+
+    remaining_months = (due_date.year - today.year) * 12 + due_date.month - today.month
+
+    return remaining_months
+
+
+
 
 @app.route('/loan_details/<int:request_id>', methods=['GET', 'POST'])
 def loan_details(request_id):
@@ -361,6 +500,8 @@ def loan_details(request_id):
         gat_id = session['gat_id']
         cur = mysql.connection.cursor()
         loan_request = get_loan_request_by_id(request_id)
+
+        
         if request.method == 'POST':
             # Handle loan approval submission
             approved = request.form.get('approve_loan')
@@ -379,28 +520,106 @@ def loan_details(request_id):
                     "JOIN members ON loan_requests.member_id = members.member_id "
                     "WHERE loan_requests.gat_id = %s AND loan_requests.request_id = %s", (gat_id, request_id))
         loan_details = cur.fetchone()
-
+        
         cur.close()
         return render_template('loan_details.html', loan_details=loan_details)
     else:
         return redirect(url_for('login'))
+@app.errorhandler(Exception)
+def handle_error(e):
+    print(f"An error occurred: {e}")
+    return "An error occurred", 500
 
-@app.route('/due_payments/<int:loan_request_id>')
-def due_payments(loan_request_id):
-    if 'gat_id' in session:
-        cur = mysql.connection.cursor()
 
-        # Retrieve loan request details
-        cur.execute("SELECT * FROM loan_requests WHERE loan_request_id = %s", (loan_request_id,))
-        loan_request = cur.fetchone()
+def display_amortization_schedule(amortization_schedule):
+    table_html = """
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Monthly Payment</th>
+                <th>Principal Repayment</th>
+                <th>Interest Payment</th>
+                <th>Remaining Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+    """
 
-        # Calculate due payments
-        due_payments = calculate_due_payments(loan_request)
+    for payment in amortization_schedule:
+        table_html += f"""
+            <tr>
+                <td>{payment['Month']}</td>
+                <td>{payment['Monthly_Payment']:.2f}</td>
+                <td>{payment['Principal_Repayment']:.2f}</td>
+                <td>{payment['Interest_Payment']:.2f}</td>
+                <td>{payment['Remaining_Balance']:.2f}</td>
+            </tr>
+        """
 
-        cur.close()
-        return render_template('due_payments.html', loan_request=loan_request, due_payments=due_payments)
+    table_html += """
+        </tbody>
+    </table>
+    """
+
+    return table_html
+
+def calculate_monthly_amortization(principal, annual_interest_rate, loan_term_in_years):
+    # Set precision for Decimal calculations
+    getcontext().prec = 28  # Adjust precision as needed
+
+    principal = Decimal(str(principal))
+    annual_interest_rate = Decimal(str(annual_interest_rate))
+
+    monthly_interest_rate = annual_interest_rate / 12 / 100
+    total_payments = loan_term_in_years * 12
+
+    emi = (principal * monthly_interest_rate) / (1 - (1 + monthly_interest_rate) ** -total_payments)
+
+    amortization_schedule = []
+
+    remaining_balance = principal
+
+    for month in range(1, total_payments + 1):
+        interest_payment = remaining_balance * monthly_interest_rate
+        principal_payment = emi - interest_payment
+        remaining_balance -= principal_payment
+
+        amortization_schedule.append({
+            "Month": month,
+            "Monthly_Payment": emi,
+            "Principal_Repayment": principal_payment,
+            "Interest_Payment": interest_payment,
+            "Remaining_Balance": remaining_balance
+        })
+
+    return amortization_schedule
+
+@app.route('/calculate_emi_route/<int:loan_id>', methods=['GET', 'POST'])
+def calculate_emi_route(loan_id):
+    if request.method == 'POST':
+        # Handle the form submission if needed
+        pass
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT lr.*, m.member_name FROM loan_requests lr JOIN members m ON lr.member_id = m.member_id WHERE lr.request_id = %s", (loan_id,))
+    loan_details = cur.fetchone()
+    cur.close()
+
+    if loan_details:
+        principal = loan_details[3]
+        principal = Decimal(str(principal))
+        annual_rate = loan_details[4]
+        member_name = loan_details[-1]
+        emi_schedule = calculate_monthly_amortization(principal, annual_rate, 1)
+        table_html = display_amortization_schedule(emi_schedule)
+
+        return render_template('calculate_emi.html', table_html=table_html, loan_details=loan_details)
     else:
-        return redirect(url_for('login'))
+        return render_template('error.html', message="Loan not found")
+    
+    
+
 @app.route('/make_due_payment/<int:loan_request_id>/<int:month>')
 def make_due_payment(loan_request_id, month):
     if 'gat_id' in session:
@@ -421,16 +640,73 @@ def make_due_payment(loan_request_id, month):
         return redirect(url_for('due_payments', loan_request_id=loan_request_id))
     else:
         return redirect(url_for('login'))
+    
 
-# ...
+# Flask route for changing loan status
+@app.route('/change_loan_status/<int:request_id>', methods=['POST'])
+def change_loan_status(request_id):
+    if 'gat_id' in session:
+        cur = mysql.connection.cursor()
+        
+        # Retrieve the new status from the form
+        new_status = request.form['newStatus']
 
+        # Update loan request status
+        cur.execute("UPDATE loan_requests SET request_status = %s WHERE request_id = %s", (new_status, request_id))
+        mysql.connection.commit()
+        # approve_loan_request(request_id)
+        cur.close()
+        return redirect(url_for('loan_details', request_id=request_id))
+    else:
+        return redirect(url_for('login'))
+@app.route('/update_total_bachat', methods=['POST'])
+def update_total_bachat():
+    if 'gat_id' in session:
+        gat_id = session['gat_id']
+        cur = mysql.connection.cursor()
+
+        # Get the current month and year
+        current_month_year = datetime.now().strftime("%Y-%m-01")
+
+        # Calculate the total bachat for all previous months up to the current month
+        month_start = datetime.strptime("2022-01-01", "%Y-%m-%d")  # Change this to the start month of your application
+        while month_start <= datetime.now():
+            month_end = month_start + relativedelta(months=1) - timedelta(days=1)
+
+            cur.execute("SELECT SUM(bachat_amount) FROM monthly_bachat WHERE gat_id = %s AND "
+                        "bachat_date BETWEEN %s AND %s", (gat_id, month_start, month_end))
+
+            total_bachat_for_month = cur.fetchone()[0]
+
+            # Check if there is an entry for the current month in total_bachat
+            cur.execute("SELECT * FROM total_bachat WHERE gat_id = %s AND month_year = %s", (gat_id, month_start.strftime("%Y-%m-01")))
+            existing_entry = cur.fetchone()
+
+            if existing_entry:
+                # Update the existing entry
+                cur.execute("UPDATE total_bachat SET total_bachat_amount = %s WHERE gat_id = %s AND month_year = %s",
+                            (total_bachat_for_month, gat_id, month_start.strftime("%Y-%m-01")))
+            else:
+                # Insert a new entry for the current month
+                cur.execute("INSERT INTO total_bachat (gat_id, total_bachat_amount, month_year) VALUES (%s, %s, %s)",
+                            (gat_id, total_bachat_for_month, month_start.strftime("%Y-%m-01")))
+
+            month_start += relativedelta(months=1)
+
+        mysql.connection.commit()
+        cur.close()
+
+        # Redirect to the page where you want to go after updating total_bachat
+        return redirect(url_for('dashboard'))
+    else:
+        return redirect(url_for('login'))
 # View Bachat page
 @app.route('/view_bachat')
 def view_bachat():
     if 'gat_id' in session:
         gat_id = session['gat_id']
         cur = mysql.connection.cursor()
-
+        update_total_bachat()
         # Retrieve total bachat for all months for each member
         cur.execute("SELECT members.member_name, SUM(monthly_bachat.bachat_amount) "
                     "FROM members LEFT JOIN monthly_bachat "
@@ -445,14 +721,33 @@ def view_bachat():
         cur = mysql.connection.cursor()
 
         # Retrieve total bachat for the gat (group)
-        cur.execute("SELECT SUM(monthly_bachat.bachat_amount) "
-                    "FROM members LEFT JOIN monthly_bachat "
-                    "ON members.member_id = monthly_bachat.member_id "
-                    "WHERE members.gat_id = %s", (gat_id,))
-        total_bachat_for_gat = cur.fetchone()[0]
+        cur.execute("SELECT SUM(total_bachat_amount) FROM total_bachat WHERE gat_id = %s", (gat_id,))
+        total_bachat_for_gat_tuple = cur.fetchone()
+
+        if total_bachat_for_gat_tuple and total_bachat_for_gat_tuple[0] is not None:
+            total_bachat_for_gat = Decimal(total_bachat_for_gat_tuple[0])
+        else:
+            total_bachat_for_gat = Decimal(0)
+        
+        cur = mysql.connection.cursor()
+
+        cur.execute("SELECT SUM(request_amount) FROM loan_requests WHERE request_status='approved'")
+        loan_request_result = cur.fetchone()
+        
+        if loan_request_result and len(loan_request_result) > 0:
+            loan_request = Decimal(loan_request_result[0])
+        else:
+            loan_request = Decimal(0)
+        cur.close()
+        # if loan_request[5] == 'approved':
+        total_bachat_for_gat = total_bachat_for_gat - loan_request
+        
+        # else:
+            #  total_bachat_for_gat=total_bachat_for_gat   
+
 
         cur.close()        
-        return render_template('view_bachat.html', total_bachat_all_months=total_bachat_all_months, total_bachat_for_gat=total_bachat_for_gat)
+        return render_template('view_bachat.html', total_bachat_all_months=total_bachat_all_months, total_bachat_for_gat=total_bachat_for_gat , loan_request=loan_request )
     else:
         return redirect(url_for('login'))
 

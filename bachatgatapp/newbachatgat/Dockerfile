@@ -8,6 +8,8 @@ ENV DB_NAME=database_name
 
 
 COPY . .
+RUN pip install prettytable
+RUN pip install python-dateutil
 
 RUN pip install -r requirements.txt
 

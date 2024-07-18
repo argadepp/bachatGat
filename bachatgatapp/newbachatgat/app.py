@@ -886,7 +886,6 @@ def add_bachat():
         return render_template('add_bachat.html', members=members)
     else:
         return redirect(url_for('login'))
-
 # Error page
 @app.route('/error')
 def error():

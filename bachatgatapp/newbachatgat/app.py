@@ -892,6 +892,5 @@ def add_bachat():
 def error():
     message = request.args.get('message', 'An error occurred.')
     return render_template('error.html', message=message)
-
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

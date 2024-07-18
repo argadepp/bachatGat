@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+
+environment {
+        DOCKER_REGISTRY_URL = 'ghcr.io'
+        DOCKER_USERNAME = 'argadepp'
+    }
+
+    parameters {
+         string(name: 'version_arg', , description: 'Enter the version of image')
+    } 
+    stages {
+        stage('Docker Login') {
+            steps {
+                // Retrieve the secret text and use it for docker login
+                withCredentials([string(credentialsId: 'GHCR_TOKEN', variable: 'DOCKER_REGISTRY_TOKEN')]) {
+                    sh 'echo $DOCKER_REGISTRY_TOKEN | docker login $DOCKER_REGISTRY_URL -u $DOCKER_USERNAME --password-stdin'
+                }
+            }
+        }
+    
+          stage('Build Docker Image') {
+            steps {
+                // Run Maven clean install
+               
+                sh 'docker build -t ghcr.io/argadepp/bachatgat:"$version_arg" .'
+            }
+        }
+          stage('Push Docker Image') {
+            steps {
+                // Run Maven clean install
+               
+                sh 'docker push ghcr.io/argadepp/bachatgat:"$version_arg"'
+            }
+        }        
+    }
+
+    post {
+        success {
+            echo 'Build successful!'
+        }
+        failure {
+            echo 'Build failed!'
+        }
+    }
+}

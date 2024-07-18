@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ghcr.io/argadepp/bachatgat:master
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DB_HOST
+          value: "mysql"  # The service name of the MySQL database
+        - name: DB_USER
+          value: "root"
+        - name: DB_PASSWORD
+          value: "password"
+        - name: DB_NAME
+          value: "jansevadb"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 5000
+      nodePort: 30080
+  selector:
+    app: frontend

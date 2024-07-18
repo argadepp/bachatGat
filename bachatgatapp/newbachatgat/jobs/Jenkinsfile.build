@@ -7,7 +7,7 @@ environment {
     }
 
     parameters {
-         string(name: 'version_arg', , description: 'Enter the version of image')
+         string(name: 'version_arg', defaultValue: 'v1.1', description: 'Enter the version of image')
     } 
     stages {
         stage('Docker Login') {

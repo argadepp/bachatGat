@@ -32,7 +32,15 @@ environment {
                
                 sh 'docker push ghcr.io/argadepp/bachatgat:"$version_arg"'
             }
-        }        
+        }   
+
+        stage('Deploy the application') {
+            steps {
+                // Run Maven clean install
+               
+                sh 'kubectl apply -f ../kubernetes/'
+            }
+        }      
     }
 
     post {

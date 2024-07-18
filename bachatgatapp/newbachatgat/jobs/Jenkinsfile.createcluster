@@ -1,0 +1,37 @@
+pipeline {
+    agent any
+    
+    parameters {
+        string(name: 'CLUSTER_NAME', defaultValue: 'my-kind-cluster', description: 'Name of the Kind cluster')
+    }
+    
+    stages {
+        stage('Setup Kind Cluster') {
+            steps {
+                script {
+                    def kindConfig = readFile('kind/config.yaml') // Replace with your Kind config file path
+                    
+                    sh "kind create cluster --name ${params.CLUSTER_NAME} --config <(echo '${kindConfig}')"
+                }
+            }
+        }
+        
+        stage('Verify Cluster') {
+            steps {
+                script {
+                    sh "kubectl cluster-info --context kind-${params.CLUSTER_NAME}"
+                    sh "kubectl get nodes --context kind-${params.CLUSTER_NAME}"
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo "Kind cluster '${params.CLUSTER_NAME}' created successfully!"
+        }
+        failure {
+            echo "Failed to create Kind cluster '${params.CLUSTER_NAME}'"
+        }
+    }
+}

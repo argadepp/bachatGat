@@ -1,1 +1,24 @@
-theme: jekyll-theme-cayman
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 6443
+        hostPort: 6443
+        protocol: TCP
+    kubeadmConfigPatches:
+      - |
+        apiVersion: kubeadm.k8s.io/v1beta2
+        kind: ClusterConfiguration
+        apiServer:
+          certSANs:
+            - "127.0.0.1"
+            - "10.96.0.1"
+            - "172.18.0.2"
+            - "13.232.191.252"
+            - "localhost"
+            - "kubernetes"
+            - "kubernetes.default"
+            - "kubernetes.default.svc"
+            - "kubernetes.default.svc.cluster.local"
+            - "103.160.166.209"

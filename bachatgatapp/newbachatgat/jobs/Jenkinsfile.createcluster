@@ -9,13 +9,13 @@ pipeline {
         stage('Setup Kind Cluster') {
             steps {
                 script {
-                    def kindConfig = readFile('kind/cluster.yaml') // Replace with your Kind config file path
+ //                   def kindConfig = readFile('kind/cluster.yaml') // Replace with your Kind config file path
                     
                     sh """
-                    kind create cluster --name ${params.CLUSTER_NAME} --config -
+                    kind create cluster --name ${params.CLUSTER_NAME}
                     """
                     // Pass configuration directly as input to the command
-                    sh "echo '${kindConfig}' | kind create cluster --name ${params.CLUSTER_NAME} --config -"
+//                    sh "echo '${kindConfig}' | kind create cluster --name ${params.CLUSTER_NAME} --config -"
                 }
             }
         }

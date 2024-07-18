@@ -15,7 +15,7 @@ spec:
       containers:
         - name: frontend
           # image: ghcr.io/argadepp/bachatgat:master
-          image: ghcr.io/argadepp/bachatgat:latest
+          image: ghcr.io/argadepp/bachatgat:v1.1
           ports:
             - containerPort: 5000
           env:

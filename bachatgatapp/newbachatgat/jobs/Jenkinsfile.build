@@ -38,7 +38,7 @@ environment {
             steps {
                 // Run Maven clean install
                
-                sh 'pwd'
+                sh 'kubectl apply -f bachatgatapp/newbachatgat/kubernetes/'
             }
         }      
     }

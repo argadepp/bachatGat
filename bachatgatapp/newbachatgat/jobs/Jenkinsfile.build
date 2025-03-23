@@ -1,6 +1,5 @@
 pipeline {
     agent any
-
 environment {
         DOCKER_REGISTRY_URL = 'ghcr.io'
         DOCKER_USERNAME = 'argadepp'

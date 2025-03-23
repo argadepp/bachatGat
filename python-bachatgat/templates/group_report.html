@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding-top: 20px; }
+    </style>
+</head>
+<body class="container">
+    <header class="text-center mb-4">
+        <h1 class="display-5 text-info">Group Report: {{ group.name }}</h1>
+    </header>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <p class="card-text"><strong>Address:</strong> {{ group.address }}</p>
+            <p class="card-text"><strong>Total Members:</strong> {{ members|length }}</p>
+            <p class="card-text"><strong>Individual Savings:</strong> ${{ "%.2f" % (total_savings - group.group_savings) }}</p>
+            <p class="card-text"><strong>Group Savings (Interest):</strong> ${{ "%.2f" % group.group_savings }}</p>
+            <p class="card-text"><strong>Total Combined Savings:</strong> ${{ "%.2f" % total_savings }}</p>
+            <p class="card-text"><strong>Total Loans:</strong> ${{ "%.2f" % total_loans }}</p>
+            <p class="card-text"><strong>Total Annual Interest ({{ group.interest_rate * 100 }}%):</strong> ${{ "%.2f" % total_interest }}</p>
+        </div>
+    </div>
+
+    {% if group.image_path %}
+        <img src="{{ group.image_path }}" width="64" height="64" alt="{{ group.name }} Image" class="mb-3">
+    {% endif %}
+
+    <h3 class="text-primary">Member Summary</h3>
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Savings</th>
+                <th>Loan</th>
+                <th>Monthly Repayment</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for id, member in members.items() %}
+                <tr>
+                    <td>{{ id[-4:] }}</td>
+                    <td>{{ member.name }}</td>
+                    <td>${{ "%.2f" % member.savings }}</td>
+                    <td>${{ "%.2f" % member.loan }}</td>
+                    <td>${{ "%.2f" % member.calculate_monthly_repayment() }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('index', group_id=group.id) }}" class="btn btn-primary">Back</a>
+    <a href="{{ url_for('group_report_pdf', group_id=group.id) }}" class="btn btn-danger">Download PDF</a>
+</body>
+</html>

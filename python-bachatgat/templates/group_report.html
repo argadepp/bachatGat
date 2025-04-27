@@ -18,11 +18,11 @@
         <div class="card-body">
             <p class="card-text"><strong>Address:</strong> {{ group.address }}</p>
             <p class="card-text"><strong>Total Members:</strong> {{ members|length }}</p>
-            <p class="card-text"><strong>Individual Savings:</strong> ${{ "%.2f" % (total_savings - group.group_savings) }}</p>
-            <p class="card-text"><strong>Group Savings (Interest):</strong> ${{ "%.2f" % group.group_savings }}</p>
-            <p class="card-text"><strong>Total Combined Savings:</strong> ${{ "%.2f" % total_savings }}</p>
-            <p class="card-text"><strong>Total Loans:</strong> ${{ "%.2f" % total_loans }}</p>
-            <p class="card-text"><strong>Total Annual Interest ({{ group.interest_rate * 100 }}%):</strong> ${{ "%.2f" % total_interest }}</p>
+            <p class="card-text"><strong>Individual Savings:</strong> ₹{{ (total_savings - group.group_savings)|round(2) }}</p>
+            <p class="card-text"><strong>Group Savings (Interest):</strong> ₹{{ group.group_savings|round(2) }}</p>
+            <p class="card-text"><strong>Total Combined Savings:</strong> ₹{{ total_savings|round(2) }}</p>
+            <p class="card-text"><strong>Total Loans:</strong> ₹{{ total_loans|round(2) }}</p>
+            <p class="card-text"><strong>Total Annual Interest ({{ group.interest_rate * 100 }}%):</strong> ₹{{ total_interest|round(2) }}</p>
         </div>
     </div>
 
@@ -46,9 +46,9 @@
                 <tr>
                     <td>{{ id[-4:] }}</td>
                     <td>{{ member.name }}</td>
-                    <td>${{ "%.2f" % member.savings }}</td>
-                    <td>${{ "%.2f" % member.loan }}</td>
-                    <td>${{ "%.2f" % member.calculate_monthly_repayment() }}</td>
+                    <td>₹{{ member.savings|round(2) }}</td>
+                    <td>₹{{ member.loan|round(2) }}</td>
+                    <td>₹{{ member.calculate_monthly_repayment()|round(2) }}</td>
                 </tr>
             {% endfor %}
         </tbody>

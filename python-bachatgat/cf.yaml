@@ -1,0 +1,184 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: ECS Fargate Stack for Flask + MongoDB App with Existing VPC/Subnets
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: Select existing VPC
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet::Id
+    Description: Public Subnet for ECS Services
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet::Id
+    Description: Public Subnet for ECS Services
+  FlaskImageUrl:
+    Type: String
+    Description: ECR image URL for Flask app (e.g. 123456789012.dkr.ecr.us-east-1.amazonaws.com/flask-app:latest)
+    Default: ghcr.io/argadepp/bachatgat:working
+
+Resources:
+
+  FlaskSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Flask App SG
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5000
+          ToPort: 5000
+          CidrIp: 0.0.0.0/0
+
+  MongoSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: MongoDB SG
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 27017
+          ToPort: 27017
+          SourceSecurityGroupId: !Ref FlaskSG
+
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: FlaskMongoCluster
+
+  ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ECSExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+  FlaskTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: flask-task
+      RequiresCompatibilities: [FARGATE]
+      Cpu: '512'
+      Memory: '1024'
+      NetworkMode: awsvpc
+      ExecutionRoleArn: !GetAtt ExecutionRole.Arn
+      TaskRoleArn: !GetAtt ExecutionRole.Arn
+      ContainerDefinitions:
+        - Name: flask-container
+          Image: !Ref FlaskImageUrl
+          PortMappings:
+            - ContainerPort: 5000
+          Environment:
+            - Name: FLASK_ENV
+              Value: development
+
+  MongoTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: mongo-task
+      RequiresCompatibilities: [FARGATE]
+      Cpu: '512'
+      Memory: '1024'
+      NetworkMode: awsvpc
+      ExecutionRoleArn: !GetAtt ExecutionRole.Arn
+      ContainerDefinitions:
+        - Name: mongo
+          Image: mongo:latest
+          PortMappings:
+            - ContainerPort: 27017
+
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: flask-alb
+      Subnets: [!Ref PublicSubnet1 , !Ref PublicSubnet2]
+      SecurityGroups: [!Ref FlaskSG]
+      Scheme: internet-facing
+      Type: application
+
+  FlaskTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: flask-targets
+      Port: 5000
+      Protocol: HTTP
+      VpcId: !Ref VpcId
+      TargetType: ip
+      HealthCheckPath: /
+      Matcher:
+        HttpCode: 200-399
+
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref FlaskTargetGroup
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 80
+      Protocol: HTTP
+
+  FlaskService:
+    Type: AWS::ECS::Service
+    DependsOn: Listener
+    Properties:
+      Cluster: !Ref ECSCluster
+      LaunchType: FARGATE
+      DesiredCount: 1
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          Subnets: [!Ref PublicSubnet1]
+          AssignPublicIp: ENABLED
+          SecurityGroups: [!Ref FlaskSG]
+      TaskDefinition: !Ref FlaskTaskDefinition
+      LoadBalancers:
+        - ContainerName: flask-container
+          ContainerPort: 5000
+          TargetGroupArn: !Ref FlaskTargetGroup
+
+  CloudMapNamespace:
+    Type: AWS::ServiceDiscovery::PrivateDnsNamespace
+    Properties:
+      Name: service.local
+      Vpc: !Ref VpcId
+      Description: Private DNS for ECS Services          
+  MongoServiceDiscovery:
+    Type: AWS::ServiceDiscovery::Service
+    Properties:
+      Name: mongodb
+      NamespaceId: !Ref CloudMapNamespace
+      DnsConfig:
+        RoutingPolicy: WEIGHTED
+        DnsRecords:
+          - Type: A
+            TTL: 60
+
+
+  MongoService:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref ECSCluster
+      LaunchType: FARGATE
+      DesiredCount: 1
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          Subnets: [!Ref PublicSubnet1]
+          AssignPublicIp: ENABLED
+          SecurityGroups: [!Ref MongoSG]
+      TaskDefinition: !Ref MongoTaskDefinition
+      ServiceRegistries:
+        - RegistryArn: !GetAtt MongoServiceDiscovery.Arn
+
+
+Outputs:
+  FlaskAppURL:
+    Description: URL to access Flask app
+    Value: !Join [ "", ["http://", !GetAtt LoadBalancer.DNSName] ]

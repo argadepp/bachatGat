@@ -1,0 +1,176 @@
+msgid "Bachat Gat"
+msgstr "Bachat Gat"
+
+msgid "Bachat Gat Management"
+msgstr "Bachat Gat Management"
+
+msgid "Create Group"
+msgstr "Create Group"
+
+msgid "Group Name"
+msgstr "Group Name"
+
+msgid "Interest Rate"
+msgstr "Interest Rate"
+
+msgid "Address"
+msgstr "Address"
+
+msgid "Create"
+msgstr "Create"
+
+msgid "Select Group"
+msgstr "Select Group"
+
+msgid "-- Select a Group --"
+msgstr "-- Select a Group --"
+
+msgid "Add Member to {{ group.name }}"
+msgstr "Add Member to {{ group.name }}"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Mobile"
+msgstr "Mobile"
+
+msgid "Add"
+msgstr "Add"
+
+msgid "Set Interest Rate for {{ group.name }}"
+msgstr "Set Interest Rate for {{ group.name }}"
+
+msgid "Set Rate"
+msgstr "Set Rate"
+
+msgid "Record Transaction for {{ group.name }}"
+msgstr "Record Transaction for {{ group.name }}"
+
+msgid "-- Select Member --"
+msgstr "-- Select Member --"
+
+msgid "Amount"
+msgstr "Amount"
+
+msgid "Savings"
+msgstr "Savings"
+
+msgid "Loan"
+msgstr "Loan"
+
+msgid "Repayment"
+msgstr "Repayment"
+
+msgid "Record"
+msgstr "Record"
+
+msgid "{{ group.name }} Members (Group Savings: ₹{{ "%.2f" % group.group_savings }})"
+msgstr "{{ group.name }} Members (Group Savings: ₹{{ "%.2f" % group.group_savings }})"
+
+msgid "Members"
+msgstr "Members"
+
+msgid "Group Savings"
+msgstr "Group Savings"
+
+msgid "Photo"
+msgstr "Photo"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Actions"
+msgstr "Actions"
+
+msgid "Edit"
+msgstr "Edit"
+
+msgid "Report"
+msgstr "Report"
+
+msgid "PDF"
+msgstr "PDF"
+
+msgid "Are you sure you want to delete this member?"
+msgstr "Are you sure you want to delete this member?"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Group Report"
+msgstr "Group Report"
+
+msgid "Group PDF"
+msgstr "Group PDF"
+
+msgid "Please select a group to manage members."
+msgstr "Please select a group to manage members."
+
+msgid "Edit Member"
+msgstr "Edit Member"
+
+msgid "Update Photo"
+msgstr "Update Photo"
+
+msgid "Save Changes"
+msgstr "Save Changes"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Member Report"
+msgstr "Member Report"
+
+msgid "Annual Interest"
+msgstr "Annual Interest"
+
+msgid "Monthly Repayment"
+msgstr "Monthly Repayment"
+
+msgid "months"
+msgstr "months"
+
+msgid "Transactions"
+msgstr "Transactions"
+
+msgid "Back"
+msgstr "Back"
+
+msgid "Download PDF"
+msgstr "Download PDF"
+
+msgid "Total Members"
+msgstr "Total Members"
+
+msgid "Individual Savings"
+msgstr "Individual Savings"
+
+msgid "Group Savings (Interest)"
+msgstr "Group Savings (Interest)"
+
+msgid "Total Combined Savings"
+msgstr "Total Combined Savings"
+
+msgid "Total Loans"
+msgstr "Total Loans"
+
+msgid "Total Annual Interest"
+msgstr "Total Annual Interest"
+
+msgid "Member Summary"
+msgstr "Member Summary"
+
+msgid "Group"
+msgstr "Group"
+
+msgid "No transactions yet."
+msgstr "No transactions yet."
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Date"
+msgstr "Date"

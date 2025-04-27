@@ -3,3 +3,4 @@ pillow
 werkzeug
 reportlab
 pymongo
+flask-babel

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Transaction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding-top: 20px; }
+    </style>
+</head>
+<body class="container">
+    <header class="text-center mb-4">
+        <h1 class="display-4 text-primary">Edit Transaction</h1>
+        <nav class="mt-2">
+            {% if user_role %}
+                <span class="me-3">Logged in as {{ user_role|capitalize }}</span>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-sm me-2">Login</a>
+                <a href="{{ url_for('register') }}" class="btn btn-outline-success btn-sm">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="mb-4">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'message' else 'danger' }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <section>
+        <h3 class="text-info">Editing Transaction for {{ member.name }} (ID: {{ member.id[-4:] }})</h3>
+        <form method="POST" action="{{ url_for('edit_transaction', member_id=member.id, transaction_index=transaction_index) }}" class="row g-3">
+            <div class="col-md-3">
+                <label for="amount" class="form-label">Amount</label>
+                <input type="number" name="amount" value="{{ transaction.amount }}" step="0.01" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label for="type" class="form-label">Type</label>
+                <select name="type" class="form-select" required>
+                    <option value="Savings" {% if transaction.type == 'Savings' %}selected{% endif %}>Savings</option>
+                    <option value="Loan" {% if transaction.type == 'Loan' %}selected{% endif %}>Loan</option>
+                    <option value="Repayment" {% if transaction.type == 'Repayment' %}selected{% endif %}>Repayment</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="mode" class="form-label">Mode</label>
+                <select name="mode" class="form-select" required>
+                    <option value="UPI" {% if transaction.mode == 'UPI' %}selected{% endif %}>UPI</option>
+                    <option value="CASH" {% if transaction.mode == 'CASH' %}selected{% endif %}>CASH</option>
+                    <option value="NEFT" {% if transaction.mode == 'NEFT' %}selected{% endif %}>NEFT</option>
+                    <option value="OTHER" {% if transaction.mode == 'OTHER' %}selected{% endif %}>OTHER</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="transaction_id" class="form-label">Transaction ID (optional)</label>
+                <input type="text" name="transaction_id" value="{{ transaction.transaction_id or '' }}" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" name="date" value="{{ transaction.date[:10] }}" class="form-control" required>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Save</button>
+            </div>
+        </form>
+        <a href="{{ url_for('member_report', member_id=member.id) }}" class="btn btn-secondary mt-3">Cancel</a>
+    </section>
+</body>
+</html>

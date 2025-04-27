@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color:#6a11cb;
+            /* Dark background */
+            color: #f8f9fa; /* Light text for contrast */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background-color: #ffffff; /* Light background for the card */
+            color: #212529; /* Dark text for the card */
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for the card */
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+        }
+        .card-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        a {
+            color: #007bff; /* Bootstrap primary color for links */
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <section class="vh-100 gradient-custom">
+        <div class="container py-5 h-100">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="card bg-dark text-white" style="border-radius: 1rem;">
+        <div class="card-body">
+            <header class="card-header">
+                <h1 class="h4 text-primary">Login</h1>
+            </header>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mb-4">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'success' if category == 'message' else 'danger' }}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="/login">
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </li>
+                    <li class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </li>
+                    <li class="text-center">
+                        <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
+                    </li>
+                </ul>
+            </form>
+            <p class="text-center mt-3">
+                Don't have an account? <a href="{{ url_for('register') }}" class="text-primary">Register</a>
+            </p>
+        </div>
+    </div>
+</div>
+</div>
+</section>
+</body>
+</html>

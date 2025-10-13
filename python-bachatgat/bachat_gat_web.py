@@ -10,6 +10,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
+
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "static/uploads"
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
